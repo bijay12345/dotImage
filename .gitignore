@@ -1,0 +1,7 @@
+venv
+**/__pycache__
+**/migrations
+Importants.txt
+**/.env
+Logs
+settings.py
