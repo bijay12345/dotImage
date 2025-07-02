@@ -4,4 +4,5 @@ from .models import Art
 class ArtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Art
-        fields="__all__"
+        fields=['id',"original_file","dotted_image","uploaded_at"]
+        extra_kwargs = {'dot_image': {'reaad_only': True}}

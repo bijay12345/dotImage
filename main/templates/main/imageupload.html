@@ -9,6 +9,10 @@
     <form action="{% url 'uploadImage' %}" enctype="multipart/form-data" method="post">
         {%csrf_token%}
         <input type="file" name="original_file" />
+        <input type="text" name="shape" placeholder="shape">
+        <input type="number" name="dots" placeholder="dots">
+        <input type="number" name="size" placeholder="size">
+
         <button type="submit">Submit</button>
     </form>
 </body>
