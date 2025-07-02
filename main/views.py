@@ -4,8 +4,17 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from .serializers import ArtSerializer
+from .models import Art
+from django.shortcuts import redirect
 
-class ArtView(APIView):
+class DashboardApiView(APIView):
+    def get(self, request):
+        data = Art.objects.all()
+        serializer = ArtSerializer(data, many=True)
+        print(serializer.data)
+        return render(request, "main/dashboard.html", {"data":serializer.data})
+
+class ArtAPIView(APIView):
     parser_classes = [MultiPartParser]
 
     def get(self, request):
@@ -25,6 +34,6 @@ class ArtView(APIView):
             dot_image = createDottedImage(instance.original_file.path, int(dots), shape, int(dot_size))
             instance.dotted_image.name = dot_image.split('media/')[-1]
             instance.save()
-
-            return Response(ArtSerializer(instance).data)
+            return redirect("/")
+            # return Response(ArtSerializer(instance).data)
         return Response(serializer.errors, status=404)

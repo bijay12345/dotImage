@@ -1,0 +1,37 @@
+{% extends "main/baselayout.html" %}
+
+{% block title %}Dashboard - Dot Art{% endblock %}
+
+{% block content %}
+  <h1 style="text-align: center; color: #fff; margin: 40px 0 20px;">🎨 Dot Art Gallery Dashboard</h1>
+
+  <div class="grid-container" style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 0 20px 40px;
+  ">
+    {% for d in data %}
+    <div class="card" style="
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    ">
+      <img src="{{ d.dotted_image }}" alt="{{ d.title }}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #eee;" />
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+        <h3 style="margin: 0; color: #333;">{{ d.title }}</h3>
+        <p style="margin: 0; color: #666;">{{ d.description }}</p>
+        <div class="tags" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <div class="tag" style="background: linear-gradient(to right, #ff758c, #ff7eb3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">Shape: {{ d.shape }}</div>
+          <div class="tag" style="background: linear-gradient(to right, #ff758c, #ff7eb3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">Shape Count: {{ d.shape_count }}</div>
+          <div class="tag" style="background: linear-gradient(to right, #ff758c, #ff7eb3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">Size: {{ d.size }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -21,14 +21,14 @@ def createDottedImage(image_path, num_dots=1000, shape="circle", size=None):
 
     for y in range(0, height, step):
         for x in range(0, width, step):
-            r,g,b = np_img[y][x]
-            brightness = int(0.299 * r + 0.587 * g + 0.114 * b) 
-            
+            r, g, b = np_img[y][x]
+            brightness = int(0.299 * r + 0.587 * g + 0.114 * b)
 
+            # Determine radius
             if size is not None:
                 radius = size
             else:
-                radius = max(1, min(5, step // 3 - brightness // 64))  # dynamic based on brightness
+                radius = max(1, min(5, step // 3 - brightness // 64))
 
             left = max(0, x - radius)
             top = max(0, y - radius)
@@ -41,12 +41,7 @@ def createDottedImage(image_path, num_dots=1000, shape="circle", size=None):
                 elif shape == "square":
                     draw.rectangle((left, top, right, bottom), fill=(r, g, b))
                 elif shape == "triangle":
-                    center_x = x
-                    triangle = [
-                        (center_x, top),
-                        (left, bottom),
-                        (right, bottom)
-                    ]
+                    triangle = [(x, top), (left, bottom), (right, bottom)]
                     draw.polygon(triangle, fill=(r, g, b))
 
     output_path = image_path.replace("uploads", "dot_art")

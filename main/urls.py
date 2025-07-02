@@ -1,6 +1,12 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path("", views.ArtView.as_view(), name="uploadImage"),
+    path("", views.DashboardApiView.as_view(), name="dashboard"),
+    path("artupload", views.ArtAPIView.as_view(), name="artupload"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

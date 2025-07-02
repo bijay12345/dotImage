@@ -1,19 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="{% url 'uploadImage' %}" enctype="multipart/form-data" method="post">
-        {%csrf_token%}
-        <input type="file" name="original_file" />
-        <input type="text" name="shape" placeholder="shape">
-        <input type="number" name="dots" placeholder="dots">
-        <input type="number" name="size" placeholder="size">
+{% extends "main/baselayout.html" %}
 
-        <button type="submit">Submit</button>
-    </form>
-</body>
-</html>
+{% block title %}Upload Dot Art{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+  }
+
+  .form-wrapper {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 800px;
+    margin: 40px auto;
+  }
+
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+  }
+
+  input[type="file"],
+  input[type="text"],
+  select,
+  textarea {
+    flex: 1 1 180px;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  textarea {
+    flex: 1 1 100%;
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  input[type="text"]:focus,
+  input[type="file"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #ff6f61;
+    outline: none;
+  }
+
+  button {
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background: #e6554f;
+  }
+
+  @media (max-width: 600px) {
+    form {
+      flex-direction: column;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+  <h2>Generate Dot Art</h2>
+  <form action="{% url 'artupload' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Enter a title" required />
+    <textarea name="description" placeholder="Enter a description..." required></textarea>
+
+    <input type="file" name="original_file" required />
+
+    <select name="shape" required>
+      <option value="" disabled selected>Select shape</option>
+      <option value="triangle">Triangle</option>
+      <option value="square">Square</option>
+      <option value="circle">Circle</option>
+    </select>
+
+    <input type="text" name="dots" placeholder="Count of selected shape" required />
+    <input type="text" name="shape_count" placeholder="Size" required />
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+{% endblock %}

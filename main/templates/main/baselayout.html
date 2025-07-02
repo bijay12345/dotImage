@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Dot Art{% endblock %}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0c3fc 0%, #8ec5fc 100%);
+      padding-top: 80px;
+    }
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+
+  {% include "main/navbar.html" %}
+
+  <main>
+    {% block content %}
+    <!-- Default content -->
+    {% endblock %}
+  </main>
+
+</body>
+</html>
