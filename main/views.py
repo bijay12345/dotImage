@@ -25,13 +25,15 @@ class ArtAPIView(APIView):
         dots = request.data.get('dots') if request.data.get('dots') else 5000
         shape = request.data.get('shape') if request.data.get('shape') else "circle" 
         dot_size = request.data.get('size') if request.data.get('size') else 3 
-
         serializer = ArtSerializer(data=data)
         
         if serializer.is_valid():
             instance = serializer.save()
+            shape_color = instance.shape_color
+            background_color = instance.background_color
+
             # Generate Dot Images
-            dot_image = createDottedImage(instance.original_file.path, int(dots), shape, int(dot_size))
+            dot_image = createDottedImage(instance.original_file.path, int(dots), shape, int(dot_size), shape_color, background_color)
             instance.dotted_image.name = dot_image.split('media/')[-1]
             instance.save()
             return redirect("/")

@@ -10,6 +10,8 @@ class Art(models.Model):
     shape=models.CharField(max_length=100, null=True)
     size=models.CharField(max_length=100, null=True)
     shape_count=models.IntegerField(null=True)
+    shape_color = models.CharField(max_length=100, default="#03fc0f")
+    background_color = models.CharField(max_length=100, default="#0f03fc")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
