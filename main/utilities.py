@@ -1,38 +1,44 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw,ImageEnhance
 import numpy as np
 import os
 from math import sqrt
 
 def createDottedImage(image_path, num_dots=10000):
-    img = Image.open(image_path).convert("RGB")
-    img = img.resize((400, 400))  # Resize for uniform density (optional)
+    # Load, convert to grayscale, and resize
+    img = Image.open(image_path).convert("L")
+    img = img.resize((200, 200))
+
+    # Brightness enhancement
+    enhancer = ImageEnhance.Brightness(img)
+    img = enhancer.enhance(1.5)  # Increase brightness (1.0 = original, >1 = brighter)
+
     np_img = np.array(img)
 
-    width, height = img.size
-    total_area = width * height
-    area_per_dot = total_area / num_dots
-    approx_spacing = int(sqrt(area_per_dot))  # Approximate step size
-
-    # Ensure valid range
-    step = max(2, min(20, approx_spacing))
-
+    # Create a blank white image
     dot_img = Image.new("RGB", img.size, "white")
     draw = ImageDraw.Draw(dot_img)
 
-    for y in range(0, height, step):
-        for x in range(0, width, step):
-            r,g,b = np_img[y][x]
-            brightness = int(0.299 * r + 0.587 * g + 0.114 * b) 
-            
-            radius = max(1, min(5, step // 3 - brightness // 64))
+    step = 3  # More dots
 
-            left = max(0, x - radius)
-            top = max(0, y - radius)
-            right = min(width, x + radius)
-            bottom = min(height, y + radius)
+    for y in range(0, img.size[1], step):
+        for x in range(0, img.size[0], step):
+            brightness = np_img[y][x]
 
-            if right >= left and bottom >= top:
-                draw.ellipse((left, top, right, bottom), fill=(r,g,b))
+            # Smaller dots in brighter areas
+            radius = max(1, 4 - brightness // 64)
+
+            x0 = x - radius
+            y0 = y - radius
+            x1 = x + radius
+            y1 = y + radius
+
+            x0 = max(0, x0)
+            y0 = max(0, y0)
+            x1 = min(img.size[0] - 1, x1)
+            y1 = min(img.size[1] - 1, y1)
+
+            if x1 >= x0 and y1 >= y0:
+                draw.ellipse((x0, y0, x1, y1), fill="black")
 
     output_path = image_path.replace("uploads", "dot_art")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

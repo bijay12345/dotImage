@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from .serializers import ArtSerializer
+from django.shortcuts import redirect
 
 
 # Create your views here.
@@ -33,5 +34,5 @@ class ArtView(APIView):
             instance.dotted_image.name = dot_image.split('media/')[-1]
             instance.save()
 
-            return Response(ArtSerializer(instance).data)
+            return redirect("/")
         return Response(serializer.errors, status=404)
