@@ -68,14 +68,14 @@ class ImageProcessing:
             pass
         elif(watermark_image_path):
             watermark_image = self.resizeImage(watermark_image_path)
-            alpha = watermark_image.split()[2]
+            alpha_channel = watermark_image.split()[3]            # Split returns [r,g,b,a] so, getting alpha channel by indexing.
             opacity = 0.3
-            alpha = ImageEnhance.Brightness(alpha).enhance(opacity)
-            watermark_image.putalpha(alpha)
+            alpha = ImageEnhance.Brightness(alpha_channel).enhance(opacity)
+            watermark_image.putalpha(alpha)  # Finally assigning the reduced alpha channel to the backgroundImage, this will reduce the image opacity
 
             # Create a new image for combining
             watermarked = Image.new("RGBA", img.size)
-            watermarked.paste(img, (0, 0))
+            watermarked.paste(img, (0, 0)) # Pasting the base image in an empty canvas
 
             # Paste the watermark with transparency
             watermarked.paste(watermark_image, (0,0), watermark_image)
