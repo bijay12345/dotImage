@@ -9,7 +9,7 @@ class ImageProcessing:
         pass
 
     def resizeImage(self, file_path):
-        img = Image.open(file_path)
+        img = Image.open(file_path).convert('RGBA')
         img = img.resize((490, 490))
         return img
     
@@ -56,10 +56,30 @@ class ImageProcessing:
         return output_path
 
 
-    def createLayeredImage(self,image_path):
+    def createLayeredImage(self,instance):
+        image_path = instance.original_file.path
+        watermark_text = instance.watermark_text
+        watermark_image_path = instance.watermark_image.path if instance.watermark_image else None
+        background_image_path = instance.background_image.path if instance.background_image else None 
         canvas = Image.new("RGB", (500,500), (114,35,35)) # Creating a blank canvas
         img = self.resizeImage(image_path)
-        canvas.paste(img, (5,5))  # Add the resized image in the blank canvas
+
+        if(watermark_text):
+            pass
+        elif(watermark_image_path):
+            watermark_image = self.resizeImage(watermark_image_path)
+            alpha = watermark_image.split()[2]
+            opacity = 0.3
+            alpha = ImageEnhance.Brightness(alpha).enhance(opacity)
+            watermark_image.putalpha(alpha)
+
+            # Create a new image for combining
+            watermarked = Image.new("RGBA", img.size)
+            watermarked.paste(img, (0, 0))
+
+            # Paste the watermark with transparency
+            watermarked.paste(watermark_image, (0,0), watermark_image)
+        canvas.paste(watermarked, (5,5))  # Add the resized image in the blank canvas
         canvas.show()
         
 

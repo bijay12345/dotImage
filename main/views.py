@@ -25,7 +25,7 @@ class ArtView(APIView):
             if(instance.creation_type == ImageTypeEnum.DOTTED.value):
                 processed_image = imageProcessor.createDottedImage(instance.original_file.path)
             elif(instance.creation_type == ImageTypeEnum.LAYERED.value):
-                processed_image = imageProcessor.createLayeredImage(instance.original_file.path)
+                processed_image = imageProcessor.createLayeredImage(instance)
             else:
                 return Response("Not a valid option", 402)
             instance.converted_art.name = processed_image.split('media/')[-1]
