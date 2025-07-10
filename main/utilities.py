@@ -1,18 +1,28 @@
-from PIL import Image, ImageDraw,ImageEnhance
+from PIL import Image, ImageDraw,ImageEnhance, ImageOps
 import numpy as np
 import os
-from math import sqrt
-from .enums import ImageTypeEnum
+from django.conf import settings
 
 class ImageProcessing:
     def __init__(self):
-        pass
+        self.border_thickness = settings.IMAGE_BORDER_THICKNESS
+        self.border_color = settings.IMAGE_BORDER_COLOR
+        self.standard_height = settings.STANDARD_HEIGHT
+        self.standard_width = settings.STANDARD_WIDTH
 
-    def resizeImage(self, file_path):
-        img = Image.open(file_path).convert('RGBA')
-        img = img.resize((490, 490))
-        return img
-    
+    def resizeImage(self, file_path=None, size=None, canvas_color = 'white'):
+        if(file_path):
+            img = Image.open(file_path).convert('RGBA')
+            width = self.standard_width if size is None else size[0]
+            height = self.standard_height if size is None else size[1]
+            img = img.resize((width, height))
+            return img
+        else:
+            width = self.standard_width if size is None else size[0]
+            height = self.standard_height if size is None else size[1]
+            canvas = Image.new("RGB", (width, height), canvas_color) 
+            return canvas
+        
     def createDottedImage(self, image_path):
         # Load resize
         img = self.resizeImage(image_path)
@@ -24,7 +34,7 @@ class ImageProcessing:
         np_img = np.array(img)
 
         # Create a blank white image
-        dot_img = Image.new("RGB", img.size, "white")
+        dot_img = self.resizeImage()
         draw = ImageDraw.Draw(dot_img)
 
         step = 3  # More dots
@@ -60,26 +70,20 @@ class ImageProcessing:
         image_path = instance.original_file.path
         watermark_text = instance.watermark_text
         watermark_image_path = instance.watermark_image.path if instance.watermark_image else None
-        background_image_path = instance.background_image.path if instance.background_image else None 
-        canvas = Image.new("RGB", (500,500), (114,35,35)) # Creating a blank canvas
-        img = self.resizeImage(image_path)
 
+        canvas = self.resizeImage(size=[1024, 1024]) # Creating a blank canvas
+        canvas = ImageOps.expand(canvas, border=self.border_thickness, fill=self.border_color)
+        img = self.resizeImage(image_path) # resizing and returns a img object.
         if(watermark_text):
             pass
-        elif(watermark_image_path):
+        elif(watermark_image_path): 
             watermark_image = self.resizeImage(watermark_image_path)
             alpha_channel = watermark_image.split()[3]            # Split returns [r,g,b,a] so, getting alpha channel by indexing.
             opacity = 0.3
             alpha = ImageEnhance.Brightness(alpha_channel).enhance(opacity)
             watermark_image.putalpha(alpha)  # Finally assigning the reduced alpha channel to the backgroundImage, this will reduce the image opacity
-
-            # Create a new image for combining
-            watermarked = Image.new("RGBA", img.size)
-            watermarked.paste(img, (0, 0)) # Pasting the base image in an empty canvas
-
-            # Paste the watermark with transparency
-            watermarked.paste(watermark_image, (0,0), watermark_image)
-        canvas.paste(watermarked, (5,5))  # Add the resized image in the blank canvas
+            img.paste(watermark_image, (0,0), watermark_image)  # Paste the watermark with transparency
+        canvas.paste(img, (10,10))  # Add the resized image in the blank canvas
         canvas.show()
         
 
